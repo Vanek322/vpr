@@ -13,7 +13,7 @@ public partial class Student
 
     public int IdClass { get; set; }
 
-    public virtual Class IdClassNavigation { get; set; } = null!;
+    public virtual Class Class { get; set; } = null!;
 
     public virtual ICollection<Protocol> Protocols { get; set; } = new List<Protocol>();
 }

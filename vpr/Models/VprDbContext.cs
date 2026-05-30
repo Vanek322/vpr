@@ -49,7 +49,7 @@ public partial class VprDbContext : DbContext
             entity.Property(e => e.IdClassLevel).HasColumnName("id_class_level");
             entity.Property(e => e.SymbolOfClass).HasColumnName("symbol_of_class");
 
-            entity.HasOne(d => d.IdClassLevelNavigation).WithMany(p => p.Classes)
+            entity.HasOne(d => d.ClassLevel).WithMany(p => p.Classes)
                 .HasForeignKey(d => d.IdClassLevel)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("classes_id_class_level_fkey");
@@ -80,12 +80,12 @@ public partial class VprDbContext : DbContext
             entity.Property(e => e.TotalScore).HasColumnName("total_score");
             entity.Property(e => e.Variant).HasColumnName("variant");
 
-            entity.HasOne(d => d.IdStudentNavigation).WithMany(p => p.Protocols)
+            entity.HasOne(d => d.Student).WithMany(p => p.Protocols)
                 .HasForeignKey(d => d.IdStudent)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("protocols_id_student_fkey");
 
-            entity.HasOne(d => d.IdTeacherAssignmentNavigation).WithMany(p => p.Protocols)
+            entity.HasOne(d => d.TeacherAssignment).WithMany(p => p.Protocols)
                 .HasForeignKey(d => d.IdTeacherAssignment)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("protocols_id_teacher_assignment_fkey");
@@ -126,7 +126,7 @@ public partial class VprDbContext : DbContext
             entity.Property(e => e.IdClass).HasColumnName("id_class");
             entity.Property(e => e.ParticipantCode).HasColumnName("participant_code");
 
-            entity.HasOne(d => d.IdClassNavigation).WithMany(p => p.Students)
+            entity.HasOne(d => d.Class).WithMany(p => p.Students)
                 .HasForeignKey(d => d.IdClass)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("students_id_class_fkey");
@@ -163,17 +163,17 @@ public partial class VprDbContext : DbContext
             entity.Property(e => e.IdSubject).HasColumnName("id_subject");
             entity.Property(e => e.IdTeacher).HasColumnName("id_teacher");
 
-            entity.HasOne(d => d.IdClassNavigation).WithMany(p => p.TeacherAssignments)
+            entity.HasOne(d => d.Class).WithMany(p => p.TeacherAssignments)
                 .HasForeignKey(d => d.IdClass)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_teacher_assignments_to_classes");
 
-            entity.HasOne(d => d.IdSubjectNavigation).WithMany(p => p.TeacherAssignments)
+            entity.HasOne(d => d.Subject).WithMany(p => p.TeacherAssignments)
                 .HasForeignKey(d => d.IdSubject)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_teacher_assignments_to_subjects");
 
-            entity.HasOne(d => d.IdTeacherNavigation).WithMany(p => p.TeacherAssignments)
+            entity.HasOne(d => d.Teacher).WithMany(p => p.TeacherAssignments)
                 .HasForeignKey(d => d.IdTeacher)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_teacher_assignments_to_teachers");

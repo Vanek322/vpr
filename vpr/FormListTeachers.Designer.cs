@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             panelBot = new Panel();
-            button1 = new Button();
+            btnExit = new Button();
             dgvTeachers = new DataGridView();
             panelBot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTeachers).BeginInit();
@@ -37,28 +37,32 @@
             // 
             // panelBot
             // 
-            panelBot.Controls.Add(button1);
+            panelBot.Controls.Add(btnExit);
             panelBot.Dock = DockStyle.Bottom;
             panelBot.Location = new Point(0, 517);
             panelBot.Name = "panelBot";
             panelBot.Size = new Size(884, 44);
             panelBot.TabIndex = 1;
             // 
-            // button1
+            // btnExit
             // 
-            button1.Dock = DockStyle.Right;
-            button1.Location = new Point(751, 0);
-            button1.Name = "button1";
-            button1.Size = new Size(133, 44);
-            button1.TabIndex = 0;
-            button1.Text = "ВЫХОД";
-            button1.UseVisualStyleBackColor = true;
+            btnExit.Dock = DockStyle.Right;
+            btnExit.Location = new Point(751, 0);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new Size(133, 44);
+            btnExit.TabIndex = 0;
+            btnExit.Text = "ВЫХОД";
+            btnExit.UseVisualStyleBackColor = true;
+            btnExit.Click += button1_Click;
             // 
             // dgvTeachers
             // 
             dgvTeachers.AllowUserToAddRows = false;
             dgvTeachers.AllowUserToDeleteRows = false;
             dgvTeachers.AllowUserToResizeColumns = false;
+            dgvTeachers.AllowUserToResizeRows = false;
+            dgvTeachers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTeachers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvTeachers.BackgroundColor = Color.White;
             dgvTeachers.BorderStyle = BorderStyle.None;
             dgvTeachers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -66,6 +70,7 @@
             dgvTeachers.Location = new Point(0, 0);
             dgvTeachers.MultiSelect = false;
             dgvTeachers.Name = "dgvTeachers";
+            dgvTeachers.ReadOnly = true;
             dgvTeachers.RowHeadersVisible = false;
             dgvTeachers.Size = new Size(884, 517);
             dgvTeachers.TabIndex = 2;
@@ -91,7 +96,7 @@
         #endregion
 
         private Panel panelBot;
-        private Button button1;
+        private Button btnExit;
         private DataGridView dgvTeachers;
     }
 }

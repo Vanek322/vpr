@@ -17,7 +17,7 @@ public partial class Protocol
 
     public int TotalScore { get; set; }
 
-    public virtual Student IdStudentNavigation { get; set; } = null!;
+    public virtual Student Student { get; set; } = null!;
 
-    public virtual TeacherAssignment IdTeacherAssignmentNavigation { get; set; } = null!;
+    public virtual TeacherAssignment TeacherAssignment { get; set; } = null!;
 }

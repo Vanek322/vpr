@@ -12,6 +12,4 @@ public partial class ClassLevel
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual ICollection<ScoreRatio> ScoreRatios { get; set; } = new List<ScoreRatio>();
-
-    public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } = new List<TeacherAssignment>();
 }

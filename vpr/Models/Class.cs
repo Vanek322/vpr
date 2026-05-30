@@ -11,7 +11,8 @@ public partial class Class
 
     public int IdClassLevel { get; set; }
 
-    public virtual ClassLevel IdClassLevelNavigation { get; set; } = null!;
+    public virtual ClassLevel ClassLevel { get; set; } = null!;
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
+    public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } = new List<TeacherAssignment>();
 }
