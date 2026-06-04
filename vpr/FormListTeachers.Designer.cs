@@ -30,8 +30,11 @@
         {
             panelBot = new Panel();
             btnExit = new Button();
+            panelTop = new Panel();
             dgvTeachers = new DataGridView();
+            btnImport = new Button();
             panelBot.SuspendLayout();
+            panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTeachers).BeginInit();
             SuspendLayout();
             // 
@@ -55,6 +58,15 @@
             btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += button1_Click;
             // 
+            // panelTop
+            // 
+            panelTop.Controls.Add(btnImport);
+            panelTop.Dock = DockStyle.Top;
+            panelTop.Location = new Point(0, 0);
+            panelTop.Name = "panelTop";
+            panelTop.Size = new Size(884, 43);
+            panelTop.TabIndex = 3;
+            // 
             // dgvTeachers
             // 
             dgvTeachers.AllowUserToAddRows = false;
@@ -67,13 +79,23 @@
             dgvTeachers.BorderStyle = BorderStyle.None;
             dgvTeachers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvTeachers.Dock = DockStyle.Fill;
-            dgvTeachers.Location = new Point(0, 0);
+            dgvTeachers.Location = new Point(0, 43);
             dgvTeachers.MultiSelect = false;
             dgvTeachers.Name = "dgvTeachers";
             dgvTeachers.ReadOnly = true;
             dgvTeachers.RowHeadersVisible = false;
-            dgvTeachers.Size = new Size(884, 517);
-            dgvTeachers.TabIndex = 2;
+            dgvTeachers.Size = new Size(884, 474);
+            dgvTeachers.TabIndex = 4;
+            // 
+            // btnImport
+            // 
+            btnImport.Location = new Point(763, 0);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(121, 43);
+            btnImport.TabIndex = 0;
+            btnImport.Text = "Импорт";
+            btnImport.UseVisualStyleBackColor = true;
+            btnImport.Click += btnImport_Click;
             // 
             // FormListTeachers
             // 
@@ -82,6 +104,7 @@
             BackColor = Color.White;
             ClientSize = new Size(884, 561);
             Controls.Add(dgvTeachers);
+            Controls.Add(panelTop);
             Controls.Add(panelBot);
             Font = new Font("Times New Roman", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             Margin = new Padding(5, 4, 5, 4);
@@ -89,6 +112,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Список учителей";
             panelBot.ResumeLayout(false);
+            panelTop.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTeachers).EndInit();
             ResumeLayout(false);
         }
@@ -97,6 +121,8 @@
 
         private Panel panelBot;
         private Button btnExit;
+        private Panel panelTop;
         private DataGridView dgvTeachers;
+        private Button btnImport;
     }
 }

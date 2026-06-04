@@ -28,7 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
+            btnExit = new Button();
+            dgvStudents = new DataGridView();
+            panelBot = new Panel();
+            ((System.ComponentModel.ISupportInitialize)dgvStudents).BeginInit();
+            panelBot.SuspendLayout();
             SuspendLayout();
+            // 
+            // btnExit
+            // 
+            btnExit.Dock = DockStyle.Right;
+            btnExit.Location = new Point(751, 0);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new Size(133, 44);
+            btnExit.TabIndex = 0;
+            btnExit.Text = "ВЫХОД";
+            btnExit.UseVisualStyleBackColor = true;
+            btnExit.Click += btnExit_Click;
+            // 
+            // dgvStudents
+            // 
+            dgvStudents.AllowUserToAddRows = false;
+            dgvStudents.AllowUserToDeleteRows = false;
+            dgvStudents.AllowUserToResizeColumns = false;
+            dgvStudents.AllowUserToResizeRows = false;
+            dgvStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvStudents.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvStudents.BackgroundColor = Color.White;
+            dgvStudents.BorderStyle = BorderStyle.None;
+            dgvStudents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvStudents.Dock = DockStyle.Fill;
+            dgvStudents.Location = new Point(0, 0);
+            dgvStudents.MultiSelect = false;
+            dgvStudents.Name = "dgvStudents";
+            dgvStudents.ReadOnly = true;
+            dgvStudents.RowHeadersVisible = false;
+            dgvStudents.Size = new Size(884, 517);
+            dgvStudents.TabIndex = 4;
+            // 
+            // panelBot
+            // 
+            panelBot.Controls.Add(btnExit);
+            panelBot.Dock = DockStyle.Bottom;
+            panelBot.Location = new Point(0, 517);
+            panelBot.Name = "panelBot";
+            panelBot.Size = new Size(884, 44);
+            panelBot.TabIndex = 3;
             // 
             // FormListStudents
             // 
@@ -36,14 +81,22 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             ClientSize = new Size(884, 561);
+            Controls.Add(dgvStudents);
+            Controls.Add(panelBot);
             Font = new Font("Times New Roman", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            Margin = new Padding(4, 4, 4, 4);
+            Margin = new Padding(4);
             Name = "FormListStudents";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Список студентов";
+            ((System.ComponentModel.ISupportInitialize)dgvStudents).EndInit();
+            panelBot.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
+
+        private Button btnExit;
+        private DataGridView dgvStudents;
+        private Panel panelBot;
     }
 }
