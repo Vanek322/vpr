@@ -57,12 +57,16 @@ namespace vpr
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgv.GridColor = Border;
 
+            // ВАЖНО: Показываем заголовки
+            dgv.ColumnHeadersVisible = true;
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Primary;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = FontButton;
             dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10, 8, 10, 8);
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dgv.ColumnHeadersHeight = 50;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 

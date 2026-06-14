@@ -30,7 +30,7 @@ namespace vpr
 
             var lblTitle = new Label
             {
-                Text = "📊 Сводка результатов ВПР",
+                Text = "Сводка результатов ВПР",
                 Font = ThemeManager.FontHeading,
                 ForeColor = ThemeManager.TextPrimary,
                 Dock = DockStyle.Fill,
