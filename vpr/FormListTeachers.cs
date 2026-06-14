@@ -17,7 +17,6 @@ namespace vpr
 {
     public partial class FormListTeachers : Form
     {
-        private OpenFileDialog openFileDialogImport;
         public FormListTeachers()
         {
             InitializeComponent();
@@ -41,6 +40,8 @@ namespace vpr
 
         private void LoadTeachers()
         {
+            dgvTeachers.Rows.Clear();
+
             try
             {
                 using (var db = new VprDbContext())
@@ -72,37 +73,146 @@ namespace vpr
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            openFileDialogImport = new OpenFileDialog();
-            openFileDialogImport.Filter = "csv files(*.csv)|*.csv";
-            openFileDialogImport.InitialDirectory = "C:\\";
-
-            if (openFileDialogImport.ShowDialog() == DialogResult.OK)
+            using (var openFileDialog = new OpenFileDialog())
             {
-                string filePath = openFileDialogImport.FileName;
-                string readText = File.ReadAllText(filePath);
-                List<string> listStrLineElements = readText.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
-
-
-                List<string> rowList = listStrLineElements.SelectMany(s => s.Split(';')).ToList();
-
-        private void sqlCon(List<string> x)
-        {
-            SqlConnection myConnection = new SqlConnection("user id=postgres;" + "password=1111;server=PostgreSQL;" + "Trusted_Connection=yes;" + "database=vpr_db; " + "connection timeout=30");
-            try
-            {
-                myConnection.Open();
-                for (int i = 0; i <= x.Count - 2; i += 2)
+                openFileDialog.Filter = "csv files(*.csv)|*.csv";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //Replace table_name with your table name, and Column1 with your column names (replace for all).
-                    SqlCommand myCommand = new SqlCommand("INSERT INTO teachers (id, full_name) " +
-                                         String.Format("Values ('{0}','{1}')", x[i], x[i + 1]), myConnection);
-                    myCommand.ExecuteNonQuery();
-                }
+                    try
+                    {
+                        var lines = File.ReadAllLines(openFileDialog.FileName, Encoding.UTF8);
 
+                        // Если кодировка неправильная, пробуем Windows-1251
+                        if (lines.Length > 0 && lines[0].Contains(""))
+                        {
+                            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                            lines = File.ReadAllLines(openFileDialog.FileName, Encoding.GetEncoding(1251));
+                        }
+
+                        using (var db = new VprDbContext())
+                        {
+                            int importedCount = 0;
+                            int skippedCount = 0;
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                var line = lines[i];
+
+                                // Пропускаем пустые строки и заголовки
+                                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                                var parts = line.Split(';');
+
+                                // Берем ФИО - это может быть первая или вторая колонка
+                                string fullName = "";
+
+                                if (parts.Length >= 2)
+                                {
+                                    // Если 2 колонки (ID;ФИО) - берем вторую
+                                    fullName = parts[1].Trim();
+                                }
+                                else if (parts.Length == 1)
+                                {
+                                    // Если 1 колонка (только ФИО) - берем первую
+                                    fullName = parts[0].Trim();
+                                }
+                                else
+                                {
+                                    skippedCount++;
+                                    continue;
+                                }
+
+                                if (string.IsNullOrWhiteSpace(fullName))
+                                {
+                                    skippedCount++;
+                                    continue;
+                                }
+
+                                // Проверяем, нет ли уже такого учителя (по ФИО)
+                                if (db.Teachers.Any(t => t.FullName == fullName))
+                                {
+                                    skippedCount++;
+                                    continue;
+                                }
+
+                                // ID не указываем - база сгенерирует его автоматически
+                                var teacher = new Teacher
+                                {
+                                    FullName = fullName
+                                };
+
+                                db.Teachers.Add(teacher);
+                                importedCount++;
+                            }
+
+                            if (importedCount > 0)
+                            {
+                                db.SaveChanges();
+                            }
+
+                            LoadTeachers();
+
+                            MessageBox.Show($"Импорт завершен!\n\nДобавлено: {importedCount}\nПропущено (пустые/дубли): {skippedCount}",
+                                "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка импорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
-            catch (Exception e) { Console.WriteLine(e.ToString()); }
-            try { myConnection.Close(); }
-            catch (Exception e) { Console.WriteLine(e.ToString()); }
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            using (var saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "CSV files (*.csv)|*.csv";
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.FileName = "teachers_export.csv";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (var db = new VprDbContext())
+                        {
+                            var teachers = db.Teachers.OrderBy(t => t.Id).ToList();
+
+                            if (teachers.Count == 0)
+                            {
+                                MessageBox.Show("Нет данных для экспорта!", "Информация",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                return;
+                            }
+
+                            // UTF-8 с BOM для корректного отображения в Excel
+                            var encoding = new UTF8Encoding(true);
+
+                            using (var writer = new StreamWriter(saveFileDialog.FileName, false, encoding))
+                            {
+                                // Заголовок
+                                writer.WriteLine("ID;ФИО");
+
+                                // Данные
+                                foreach (var teacher in teachers)
+                                {
+                                    writer.WriteLine($"{teacher.Id};{teacher.FullName}");
+                                }
+                            }
+
+                            MessageBox.Show($"Экспорт завершен!\nЭкспортировано учителей: {teachers.Count}",
+                                "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
     }
 }

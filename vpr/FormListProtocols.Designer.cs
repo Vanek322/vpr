@@ -29,10 +29,14 @@
         private void InitializeComponent()
         {
             btnExit = new Button();
-            dgvProtocols = new DataGridView();
             panelBot = new Panel();
-            ((System.ComponentModel.ISupportInitialize)dgvProtocols).BeginInit();
+            panelTop = new Panel();
+            btnImport = new Button();
+            btnExport = new Button();
+            dgvProtocols = new DataGridView();
             panelBot.SuspendLayout();
+            panelTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvProtocols).BeginInit();
             SuspendLayout();
             // 
             // btnExit
@@ -46,6 +50,47 @@
             btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 
+            // panelBot
+            // 
+            panelBot.Controls.Add(btnExit);
+            panelBot.Dock = DockStyle.Bottom;
+            panelBot.Location = new Point(0, 517);
+            panelBot.Name = "panelBot";
+            panelBot.Size = new Size(1084, 44);
+            panelBot.TabIndex = 3;
+            // 
+            // panelTop
+            // 
+            panelTop.Controls.Add(btnImport);
+            panelTop.Controls.Add(btnExport);
+            panelTop.Dock = DockStyle.Top;
+            panelTop.Location = new Point(0, 0);
+            panelTop.Name = "panelTop";
+            panelTop.Size = new Size(1084, 38);
+            panelTop.TabIndex = 4;
+            // 
+            // btnImport
+            // 
+            btnImport.Dock = DockStyle.Right;
+            btnImport.Location = new Point(870, 0);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(107, 38);
+            btnImport.TabIndex = 2;
+            btnImport.Text = "Импорт";
+            btnImport.UseVisualStyleBackColor = true;
+            btnImport.Click += btnImport_Click;
+            // 
+            // btnExport
+            // 
+            btnExport.Dock = DockStyle.Right;
+            btnExport.Location = new Point(977, 0);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(107, 38);
+            btnExport.TabIndex = 1;
+            btnExport.Text = "Экспорт";
+            btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += btnExport_Click;
+            // 
             // dgvProtocols
             // 
             dgvProtocols.AllowUserToAddRows = false;
@@ -58,22 +103,13 @@
             dgvProtocols.BorderStyle = BorderStyle.None;
             dgvProtocols.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProtocols.Dock = DockStyle.Fill;
-            dgvProtocols.Location = new Point(0, 0);
+            dgvProtocols.Location = new Point(0, 38);
             dgvProtocols.MultiSelect = false;
             dgvProtocols.Name = "dgvProtocols";
             dgvProtocols.ReadOnly = true;
             dgvProtocols.RowHeadersVisible = false;
-            dgvProtocols.Size = new Size(1084, 517);
-            dgvProtocols.TabIndex = 4;
-            // 
-            // panelBot
-            // 
-            panelBot.Controls.Add(btnExit);
-            panelBot.Dock = DockStyle.Bottom;
-            panelBot.Location = new Point(0, 517);
-            panelBot.Name = "panelBot";
-            panelBot.Size = new Size(1084, 44);
-            panelBot.TabIndex = 3;
+            dgvProtocols.Size = new Size(1084, 479);
+            dgvProtocols.TabIndex = 5;
             // 
             // FormListProtocols
             // 
@@ -82,21 +118,26 @@
             BackColor = Color.White;
             ClientSize = new Size(1084, 561);
             Controls.Add(dgvProtocols);
+            Controls.Add(panelTop);
             Controls.Add(panelBot);
             Font = new Font("Times New Roman", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             Margin = new Padding(4);
             Name = "FormListProtocols";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Результаты ВПР";
-            ((System.ComponentModel.ISupportInitialize)dgvProtocols).EndInit();
             panelBot.ResumeLayout(false);
+            panelTop.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvProtocols).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Button btnExit;
-        private DataGridView dgvProtocols;
         private Panel panelBot;
+        private Panel panelTop;
+        private DataGridView dgvProtocols;
+        private Button btnImport;
+        private Button btnExport;
     }
 }
