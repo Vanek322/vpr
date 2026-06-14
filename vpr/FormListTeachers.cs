@@ -1,54 +1,156 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using vpr.Models;
-using System.Linq;
-using Microsoft.Data.SqlClient;
-
-using static System.Windows.Forms.LinkLabel;
 
 namespace vpr
 {
     public partial class FormListTeachers : Form
     {
+        private RoundedButton btnImportBtn;
+        private RoundedButton btnExportBtn;
+        private RoundedButton btnExitBtn;
+
         public FormListTeachers()
         {
             InitializeComponent();
-
-            var colId = new DataGridViewTextBoxColumn();
-            colId.Name = "№";
-            colId.FillWeight = 10;
-            colId.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-
-            var colTeachers = new DataGridViewTextBoxColumn();
-            colTeachers.Name = "ФИО";
-            colTeachers.FillWeight = 90;
-            colTeachers.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dgvTeachers.Columns.AddRange(colId, colTeachers);
-
-            dgvTeachers.Rows.Clear();
-
+            SetupDesign();
             LoadTeachers();
+        }
+
+        private void SetupDesign()
+        {
+            ThemeManager.ApplyTheme(this);
+            this.Padding = new Padding(20);
+            this.MinimumSize = new Size(900, 600);
+
+            // Заголовок
+            var headerPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 80,
+                BackColor = ThemeManager.Surface,
+                Padding = new Padding(20, 15, 20, 15)
+            };
+            this.Controls.Add(headerPanel);
+
+            var lblTitle = new Label
+            {
+                Text = "👨‍🏫 Список учителей",
+                Font = ThemeManager.FontHeading,
+                ForeColor = ThemeManager.TextPrimary,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+            headerPanel.Controls.Add(lblTitle);
+
+            // Панель инструментов
+            var toolPanel = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 60,
+                BackColor = Color.Transparent,
+                Padding = new Padding(20, 10, 20, 10)
+            };
+            this.Controls.Add(toolPanel);
+
+            // Создаем кнопки программно
+            btnImportBtn = new RoundedButton
+            {
+                Text = "⬆ Импорт",
+                Size = new Size(130, 40),
+                BackColor = ThemeManager.Success,
+                ForeColor = Color.White,
+                BorderRadius = 12,
+                Dock = DockStyle.Right,
+                Margin = new Padding(5, 0, 0, 0)
+            };
+            btnImportBtn.Click += btnImport_Click;
+            toolPanel.Controls.Add(btnImportBtn);
+
+            btnExportBtn = new RoundedButton
+            {
+                Text = "⬇ Экспорт",
+                Size = new Size(130, 40),
+                BackColor = ThemeManager.Primary,
+                ForeColor = Color.White,
+                BorderRadius = 12,
+                Dock = DockStyle.Right,
+                Margin = new Padding(5, 0, 0, 0)
+            };
+            btnExportBtn.Click += btnExport_Click;
+            toolPanel.Controls.Add(btnExportBtn);
+
+            btnExitBtn = new RoundedButton
+            {
+                Text = "✕ Выход",
+                Size = new Size(130, 40),
+                BackColor = ThemeManager.Danger,
+                ForeColor = Color.White,
+                BorderRadius = 12,
+                Dock = DockStyle.Right,
+                Margin = new Padding(5, 0, 0, 0)
+            };
+            btnExitBtn.Click += (s, e) => this.Close();
+            toolPanel.Controls.Add(btnExitBtn);
+
+            // Карточка для таблицы
+            var tableCard = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = ThemeManager.Surface,
+                Padding = new Padding(15)
+            };
+            this.Controls.Add(tableCard);
+
+            tableCard.Paint += (s, e) =>
+            {
+                using (var pen = new Pen(ThemeManager.Border, 1))
+                    e.Graphics.DrawRectangle(pen, 0, 0, tableCard.Width - 1, tableCard.Height - 1);
+            };
+
+            // Переносим DataGridView в карточку
+            dgvTeachers.Parent = tableCard;
+            dgvTeachers.Dock = DockStyle.Fill;
+            dgvTeachers.BringToFront();
+            ThemeManager.StyleDataGridView(dgvTeachers);
         }
 
         private void LoadTeachers()
         {
             dgvTeachers.Rows.Clear();
 
+            if (dgvTeachers.Columns.Count == 0)
+            {
+                var colId = new DataGridViewTextBoxColumn
+                {
+                    Name = "№",
+                    HeaderText = "№",
+                    FillWeight = 15,
+                    ReadOnly = true
+                };
+
+                var colTeachers = new DataGridViewTextBoxColumn
+                {
+                    Name = "ФИО",
+                    HeaderText = "ФИО",
+                    FillWeight = 85,
+                    ReadOnly = true
+                };
+
+                dgvTeachers.Columns.AddRange(colId, colTeachers);
+            }
+
             try
             {
                 using (var db = new VprDbContext())
                 {
-                    var teachers = db.Teachers
-                        .OrderBy(e => e.Id)
-                        .ToList();
+                    var teachers = db.Teachers.OrderBy(e => e.Id).ToList();
 
                     foreach (var teacher in teachers)
                     {
@@ -66,11 +168,6 @@ namespace vpr
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         private void btnImport_Click(object sender, EventArgs e)
         {
             using (var openFileDialog = new OpenFileDialog())
@@ -82,7 +179,6 @@ namespace vpr
                     {
                         var lines = File.ReadAllLines(openFileDialog.FileName, Encoding.UTF8);
 
-                        // Если кодировка неправильная, пробуем Windows-1251
                         if (lines.Length > 0 && lines[0].Contains(""))
                         {
                             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -97,25 +193,15 @@ namespace vpr
                             for (int i = 0; i < lines.Length; i++)
                             {
                                 var line = lines[i];
-
-                                // Пропускаем пустые строки и заголовки
                                 if (string.IsNullOrWhiteSpace(line)) continue;
 
                                 var parts = line.Split(';');
-
-                                // Берем ФИО - это может быть первая или вторая колонка
                                 string fullName = "";
 
                                 if (parts.Length >= 2)
-                                {
-                                    // Если 2 колонки (ID;ФИО) - берем вторую
                                     fullName = parts[1].Trim();
-                                }
                                 else if (parts.Length == 1)
-                                {
-                                    // Если 1 колонка (только ФИО) - берем первую
                                     fullName = parts[0].Trim();
-                                }
                                 else
                                 {
                                     skippedCount++;
@@ -128,31 +214,24 @@ namespace vpr
                                     continue;
                                 }
 
-                                // Проверяем, нет ли уже такого учителя (по ФИО)
                                 if (db.Teachers.Any(t => t.FullName == fullName))
                                 {
                                     skippedCount++;
                                     continue;
                                 }
 
-                                // ID не указываем - база сгенерирует его автоматически
-                                var teacher = new Teacher
-                                {
-                                    FullName = fullName
-                                };
-
+                                var teacher = new Teacher { FullName = fullName };
                                 db.Teachers.Add(teacher);
                                 importedCount++;
                             }
 
                             if (importedCount > 0)
-                            {
                                 db.SaveChanges();
-                            }
 
                             LoadTeachers();
 
-                            MessageBox.Show($"Импорт завершен!\n\nДобавлено: {importedCount}\nПропущено (пустые/дубли): {skippedCount}",
+                            MessageBox.Show(
+                                $"Импорт завершен!\n\n✓ Добавлено: {importedCount}\n⊘ Пропущено: {skippedCount}",
                                 "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
@@ -187,29 +266,25 @@ namespace vpr
                                 return;
                             }
 
-                            // UTF-8 с BOM для корректного отображения в Excel
                             var encoding = new UTF8Encoding(true);
 
                             using (var writer = new StreamWriter(saveFileDialog.FileName, false, encoding))
                             {
-                                // Заголовок
                                 writer.WriteLine("ID;ФИО");
 
-                                // Данные
                                 foreach (var teacher in teachers)
                                 {
                                     writer.WriteLine($"{teacher.Id};{teacher.FullName}");
                                 }
                             }
 
-                            MessageBox.Show($"Экспорт завершен!\nЭкспортировано учителей: {teachers.Count}",
+                            MessageBox.Show($"✓ Экспорт завершен!\nЭкспортировано учителей: {teachers.Count}",
                                 "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
